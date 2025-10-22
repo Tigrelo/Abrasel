@@ -1,15 +1,15 @@
-'use client'; 
-
+'use client'; /
 import { useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner'; // MUDANÇA AQUI: Importa 'sonner'
 
+// Importa a action
 import { registerUser, type RegisterState } from '@/app/actions/auth-actions';
 
+// Importa os componentes de UI do Shadcn
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,8 +20,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-// O 'useToast' foi removido daqui
+import { useToast } from '@/components/ui/use-toast';
 
+// 1. Schema de validação (precisa ser o mesmo do server action, mas sem o 'cep', 'state' e 'city' opcionais)
+// Vamos recriá-lo para o frontend
 const formSchema = z.object({
   name: z.string().min(3, 'O nome precisa ter pelo menos 3 caracteres.'),
   email: z.string().email('E-mail inválido.'),
@@ -40,13 +42,13 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
-  
-  // MUDANÇA AQUI: Não precisamos mais do 'useToast()'
-  // const { toast } = useToast();
+  const { toast } = useToast();
 
+  // 2. useFormState para lidar com a resposta do Server Action
   const initialState: RegisterState = { errors: {}, success: false };
   const [state, dispatch] = useFormState(registerUser, initialState);
 
+  // 3. react-hook-form para validação do lado do cliente
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,8 +61,10 @@ export default function RegisterPage() {
     },
   });
 
+  // 4. Observa o campo CEP para buscar na API (Funcionalidade 1.e)
   const cepValue = form.watch('cep');
   useEffect(() => {
+    // Remove qualquer caractere não numérico
     const cleanCep = cepValue?.replace(/\D/g, '');
 
     if (cleanCep && cleanCep.length === 8) {
@@ -70,45 +74,54 @@ export default function RegisterPage() {
           if (!data.erro) {
             form.setValue('state', data.uf);
             form.setValue('city', data.localidade);
+            // Opcional: mover o foco para o próximo campo (ex: número)
           } else {
-            // MUDANÇA AQUI: API do Sonner é mais simples
-            toast.error('CEP não encontrado');
+            toast({
+              title: 'CEP não encontrado',
+              variant: 'destructive',
+            });
             form.setValue('state', '');
             form.setValue('city', '');
           }
         })
         .catch(() => {
-           // MUDANÇA AQUI
-           toast.error('Erro ao buscar CEP');
+           toast({
+              title: 'Erro ao buscar CEP',
+              variant: 'destructive',
+            });
         });
     }
-  }, [cepValue, form]);
+  }, [cepValue, form, toast]);
 
+  // 5. Lida com a resposta do Server Action
   useEffect(() => {
     if (state.success) {
-      // MUDANÇA AQUI
-      toast.success('Cadastro realizado com sucesso!', {
-         description: 'Você será redirecionado para o login.',
+      toast({
+        title: 'Cadastro realizado com sucesso!',
+        description: 'Você será redirecionado para o login.',
       });
+      // Redireciona para o login após 2 segundos
       setTimeout(() => router.push('/login'), 2000);
     }
+    // Mostra erros gerais do formulário (ex: e-mail duplicado)
     if (state.errors?._form) {
-      // MUDANÇA AQUI
-      toast.error('Erro no cadastro', {
+      toast({
+        title: 'Erro no cadastro',
         description: state.errors._form.join(', '),
+        variant: 'destructive',
       });
     }
-  }, [state, router]);
+  }, [state, router, toast]);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md rounded-lg border p-6 shadow-lg">
         <h1 className="mb-6 text-center text-2xl font-bold">Criar Conta</h1>
         
+        {/* O formulário agora chama o Server Action 'dispatch' */}
         <Form {...form}>
           <form action={dispatch} className="space-y-4">
             
-            {/* ... (O restante do formulário (Campos Nome, Email, Senha, CEP, etc.) continua IGUAL) ... */}
             {/* Campo Nome */}
             <FormField
               control={form.control}
@@ -158,7 +171,7 @@ export default function RegisterPage() {
               )}
             />
 
-            {/* --- Campos Opcionais --- */}
+        
 
             {/* Campo CEP */}
             <FormField
