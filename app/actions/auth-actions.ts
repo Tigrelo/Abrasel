@@ -1,22 +1,23 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
-import { hash } from 'bcryptjs';
-import { signIn } from '@/auth'; 
-import { AuthError } from 'next-auth'; 
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { hash } from "bcryptjs";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
+import { signOut } from "@/auth";
 
 // 1. Definir o Schema de validação com Zod
 const registerSchema = z.object({
-  name: z.string().min(3, 'O nome precisa ter pelo menos 3 caracteres.'),
-  email: z.string().email('E-mail inválido.'),
+  name: z.string().min(3, "O nome precisa ter pelo menos 3 caracteres."),
+  email: z.string().email("E-mail inválido."),
   // ... (resto do schema de registro)
   password: z
     .string()
-    .min(8, 'A senha deve ter no mínimo 8 caracteres.')
-    .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula.')
-    .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula.')
-    .regex(/[0-9]/, 'A senha deve conter pelo menos um número.'),
+    .min(8, "A senha deve ter no mínimo 8 caracteres.")
+    .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula.")
+    .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula.")
+    .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
   cep: z.string().optional(),
   state: z.string().optional(),
   city: z.string().optional(),
@@ -36,9 +37,8 @@ export type RegisterState = {
 // 2. O Server Action de Registro
 export async function registerUser(
   prevState: RegisterState,
-  formData: FormData,
+  formData: FormData
 ): Promise<RegisterState> {
- 
   const data = Object.fromEntries(formData);
 
   // Valida os dados
@@ -62,7 +62,7 @@ export async function registerUser(
 
     if (existingUser) {
       return {
-        errors: { _form: ['Este e-mail já está em uso.'] },
+        errors: { _form: ["Este e-mail já está em uso."] },
         success: false,
       };
     }
@@ -79,7 +79,7 @@ export async function registerUser(
         cep,
         state,
         city,
-        role: 'USER', // Função 1.a (Cadastro público)
+        role: "USER", // Função 1.a (Cadastro público)
       },
     });
 
@@ -87,17 +87,16 @@ export async function registerUser(
   } catch (error) {
     console.error(error);
     return {
-      errors: { _form: ['Algo deu errado. Tente novamente.'] },
+      errors: { _form: ["Algo deu errado. Tente novamente."] },
       success: false,
     };
   }
 }
 
-
 // 1. Schema de validação do Login
 const loginSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
-  password: z.string().min(1, 'A senha é obrigatória.'),
+  email: z.string().email("E-mail inválido."),
+  password: z.string().min(1, "A senha é obrigatória."),
 });
 
 // 2. Tipagem do estado de retorno
@@ -113,7 +112,7 @@ export type LoginState = {
 // 3. Server Action de Login
 export async function loginUser(
   prevState: LoginState,
-  formData: FormData,
+  formData: FormData
 ): Promise<LoginState> {
   // Converte o FormData para um objeto
   const data = Object.fromEntries(formData);
@@ -130,35 +129,37 @@ export async function loginUser(
   const { email, password } = validatedFields.data;
 
   try {
-    // 4. Tenta fazer o login usando a função 'signIn' do Next-Auth
-    await signIn('credentials', {
+    // 4. Tenta fazer o login usando a função signIn do Next-Auth
+    await signIn("credentials", {
       email,
       password,
-      redirectTo: '/dashboard', // Redireciona em caso de sucesso
+      redirectTo: "/dashboard", // Redireciona em caso de sucesso
     });
-    
-    return { success: true };
 
+    return { success: true };
   } catch (error) {
     // 5. Captura erros específicos do Next-Auth
     if (error instanceof AuthError) {
       switch (error.type) {
-        case 'CredentialsSignin':
+        case "CredentialsSignin":
           // Erro de credenciais (email/senha errados)
           return {
-            errors: { _form: ['Credenciais inválidas.'] },
+            errors: { _form: ["Credenciais inválidas."] },
             success: false,
           };
         default:
           // Outros erros de autenticação
           return {
-            errors: { _form: ['Algo deu errado com a autenticação.'] },
+            errors: { _form: ["Algo deu errado com a autenticação."] },
             success: false,
           };
       }
     }
-    
-    // Se o erro não for do Next-Auth, joga para o 'catch' geral
+
+    // Se o erro não for do Next-Auth, joga para o catch geral
     throw error;
   }
+}
+export async function signOutUser() {
+  await signOut({redirectTo: '/login'});
 }

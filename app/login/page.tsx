@@ -47,6 +47,7 @@ export default function LoginPage() {
 
   // 4. Lida com a resposta do Server Action
   useEffect(() => {
+    
     // Mostra erros gerais do formulário (ex: credenciais inválidas)
     if (state.errors?._form) {
       toast.error('Erro no Login', {

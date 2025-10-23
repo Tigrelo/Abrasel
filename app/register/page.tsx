@@ -6,8 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner'; // <-- 1. IMPORTADO CORRETAMENTE
-
+import { toast } from 'sonner';
+import Link from 'next/link';
 // Importa a action
 import { registerUser, type RegisterState } from '@/app/actions/auth-actions';
 
@@ -43,8 +43,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
-  
-  // O 'useToast()' foi removido
+ 
 
   // 2. useFormState
   const initialState: RegisterState = { errors: {}, success: false };
@@ -83,11 +82,11 @@ export default function RegisterPage() {
           }
         })
         .catch(() => {
-           // 2. CHAMADA CORRIGIDA
+          
            toast.error('Erro ao buscar CEP');
         });
     }
-  }, [cepValue, form]); // <-- 3. DEPENDÊNCIA REMOVIDA
+  }, [cepValue, form]);
 
   // 5. Lida com a resposta
   useEffect(() => {
@@ -104,7 +103,7 @@ export default function RegisterPage() {
         description: state.errors._form.join(', '),
       });
     }
-  }, [state, router]); // <-- 3. DEPENDÊNCIA REMOVIDA
+  }, [state, router]); 
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -211,6 +210,12 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full">
               Cadastrar
             </Button>
+            <div className="text-center text-sm">
+              Já tem uma conta?{' '}
+              <Link href="/login" className="font-medium text-blue-600 hover:underline">
+                Faça login
+              </Link>
+            </div>
           </form>
         </Form>
       </div>
