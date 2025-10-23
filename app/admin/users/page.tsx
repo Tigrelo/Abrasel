@@ -11,14 +11,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-// Esta é uma Server Component (async)
-export default async function AdminUsersPage() {
-  // 1. Busca a sessão (só admins chegam aqui, graças ao middleware)
-  const session = await auth();
+import { UserActions } from './user-actions';
 
-  // 2. Busca TODOS os usuários no banco (Req 5.a.i)
+export default async function AdminUsersPage() {
+  const session = await auth();
   const users = await prisma.user.findMany({
-    // Não vamos retornar o admin atual na lista para ele não se auto-deletar
     where: {
       id: { not: session?.user?.id },
     },
@@ -40,7 +37,6 @@ export default async function AdminUsersPage() {
         Total de usuários cadastrados: {users.length}
       </p>
 
-      {/* 3. Renderiza a tabela de usuários */}
       <div className="mt-6 rounded-lg border shadow-lg">
         <Table>
           <TableHeader>
@@ -52,6 +48,16 @@ export default async function AdminUsersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {/* Se não houver usuários, mostra uma linha */}
+            {users.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-gray-500">
+                  Nenhum usuário encontrado.
+                </TableCell>
+              </TableRow>
+            )}
+            
+            {/* Lista os usuários */}
             {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
@@ -60,8 +66,7 @@ export default async function AdminUsersPage() {
                   {user.city ? `${user.city} / ${user.state}` : 'N/A'}
                 </TableCell>
                 <TableCell className="text-right">
-                  {/* TODO: Adicionar botões de Editar e Deletar */}
-                  ...
+                  <UserActions userId={user.id} currentName={user.name} />
                 </TableCell>
               </TableRow>
             ))}

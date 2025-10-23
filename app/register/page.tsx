@@ -1,14 +1,13 @@
 'use client'; 
 
 import { useEffect } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Link from 'next/link';
-// Importa a action
 import { registerUser, type RegisterState } from '@/app/actions/auth-actions';
 
 // Importa os componentes de UI do Shadcn
@@ -47,7 +46,7 @@ export default function RegisterPage() {
 
   // 2. useFormState
   const initialState: RegisterState = { errors: {}, success: false };
-  const [state, dispatch] = useFormState(registerUser, initialState);
+  const [state, dispatch] = useActionState(registerUser, initialState);
 
   // 3. react-hook-form
   const form = useForm<FormData>({
@@ -75,7 +74,7 @@ export default function RegisterPage() {
             form.setValue('state', data.uf);
             form.setValue('city', data.localidade);
           } else {
-            // 2. CHAMADA CORRIGIDA
+            
             toast.error('CEP não encontrado'); 
             form.setValue('state', '');
             form.setValue('city', '');
@@ -88,17 +87,17 @@ export default function RegisterPage() {
     }
   }, [cepValue, form]);
 
-  // 5. Lida com a resposta
+  // Lida com a resposta
   useEffect(() => {
     if (state.success) {
-      // 2. CHAMADA CORRIGIDA
+      
       toast.success('Cadastro realizado com sucesso!', {
          description: 'Você será redirecionado para o login.',
       });
       setTimeout(() => router.push('/login'), 2000);
     }
     if (state.errors?._form) {
-       // 2. CHAMADA CORRIGIDA
+      
       toast.error('Erro no cadastro', {
         description: state.errors._form.join(', '),
       });

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -34,7 +34,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function LoginPage() {
   // 2. useFormState para lidar com a resposta do Server Action
   const initialState: LoginState = { errors: {}, success: false };
-  const [state, dispatch] = useFormState(loginUser, initialState);
+  const [state, dispatch] = useActionState(loginUser, initialState);
 
   // 3. react-hook-form
   const form = useForm<FormData>({
