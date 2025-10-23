@@ -19,6 +19,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
+
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
@@ -156,11 +158,14 @@ export default function RegisterPage() {
                   <FormControl>
                     <Input type="password" placeholder="********" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Mínimo 8 caracteres, 1 maiúscula, 1 minúscula e 1 número.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             {/* Campo CEP */}
             <FormField
               control={form.control}

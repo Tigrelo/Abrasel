@@ -12,7 +12,7 @@ import {
 
 // Esta é uma Server Component (async)
 export default async function ProfilePage() {
-  // Pega a sessão do usuário (protegido por middleware)
+  // 1. Pega a sessão do usuário (protegido por middleware)
   const session = await auth();
 
   // Busca os dados completos do usuário no banco
@@ -67,7 +67,7 @@ export default async function ProfilePage() {
           )}
 
           <Button asChild className="mt-4 w-full">
-            <Link href="/dashboard">Voltar ao Dashboard</Link>
+            <Link href="/dashboard">Voltar ao Painel</Link>
           </Button>
         </CardContent>
       </Card>
