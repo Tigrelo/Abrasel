@@ -1,17 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { updateUserName, deleteUser } from '@/app/actions/admin-actions';
+import { useState } from "react";
+import { toast } from "sonner";
+import { updateUserName, deleteUser } from "@/app/actions/admin-actions";
+import { Settings } from "lucide-react";
 
 // Importa os componentes de UI
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +21,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // Tipagem das props que o componente receberá
 interface UserActionsProps {
@@ -36,7 +37,7 @@ export function UserActions({ userId, currentName }: UserActionsProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [newName, setNewName] = useState(currentName);
 
-  //logica de Edição
+  // lógica de handleEditSubmit
   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -50,7 +51,7 @@ export function UserActions({ userId, currentName }: UserActionsProps) {
     }
   };
 
-  // logica de Deleção
+  //lógica de handleDeleteSubmit
   const handleDeleteSubmit = async () => {
     const result = await deleteUser(userId);
     if (result.success) {
@@ -68,21 +69,23 @@ export function UserActions({ userId, currentName }: UserActionsProps) {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Abrir menu</span>
-
-            ... {/* (Você pode substituir por um ícone) */}
+            <Settings className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>
             Editar Nome
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)} className="text-red-600">
+          <DropdownMenuItem
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="text-red-600"
+          >
             Deletar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/*Modal de Edição */}
+      {/*Modal de Edição - código igual*/}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -100,7 +103,9 @@ export function UserActions({ userId, currentName }: UserActionsProps) {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="ghost">Cancelar</Button>
+                <Button type="button" variant="ghost">
+                  Cancelar
+                </Button>
               </DialogClose>
               <Button type="submit">Salvar Alterações</Button>
             </DialogFooter>
@@ -108,20 +113,27 @@ export function UserActions({ userId, currentName }: UserActionsProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Deleção  */}
+      {/*Modal de Deleção - código igual*/}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Você tem certeza?</DialogTitle>
             <DialogDescription>
-              Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário.
+              Esta ação não pode ser desfeita. Isso irá deletar permanentemente
+              o usuário.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="ghost">Cancelar</Button>
+              <Button type="button" variant="ghost">
+                Cancelar
+              </Button>
             </DialogClose>
-            <Button type="button" variant="destructive" onClick={handleDeleteSubmit}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteSubmit}
+            >
               Sim, deletar usuário
             </Button>
           </DialogFooter>
