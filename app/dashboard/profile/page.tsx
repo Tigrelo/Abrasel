@@ -1,21 +1,25 @@
-import Link from 'next/link';
-import { auth } from '@/auth';
-import { prisma } from '@/lib/prisma';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-
+} from "@/components/ui/card";
+import { redirect } from "next/navigation";
 // Esta é uma Server Component (async)
 export default async function ProfilePage() {
   // 1. Pega a sessão do usuário (protegido por middleware)
   const session = await auth();
 
-  // Busca os dados completos do usuário no banco
+  if (!session || !session.user) {
+    return redirect("/login");
+  }
+
+  // 2. Busca os dados completos do usuário no banco
   const user = await prisma.user.findUnique({
     where: { id: session?.user?.id },
     select: {
@@ -37,7 +41,8 @@ export default async function ProfilePage() {
         <CardHeader>
           <CardTitle className="text-2xl">Seu Perfil</CardTitle>
           <CardDescription>
-            Estes são os seus dados cadastrados.
+            
+            Estes são os dados cadastrados.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -49,7 +54,7 @@ export default async function ProfilePage() {
             <p className="text-sm font-medium text-gray-500">E-mail</p>
             <p className="text-lg">{user.email}</p>
           </div>
-          
+
           {/* Mostra os dados de endereço se existirem */}
           {user.cep && (
             <>
@@ -58,7 +63,9 @@ export default async function ProfilePage() {
                 <p className="text-lg">{user.cep}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-500">Cidade/Estado</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Cidade/Estado
+                </p>
                 <p className="text-lg">
                   {user.city} / {user.state}
                 </p>

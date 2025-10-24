@@ -29,7 +29,7 @@ export default async function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Gerenciar Usuários</h1>
         <Button asChild>
-          <Link href="/dashboard">Voltar ao Dashboard</Link>
+          <Link href="/dashboard">Voltar ao Painel</Link>
         </Button>
       </div>
 
