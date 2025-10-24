@@ -63,7 +63,7 @@ export default function LoginPage() {
         <h1 className="mb-6 text-center text-2xl font-bold">Login</h1>
 
         <Form {...form}>
-          {/* O formulário chama o Server Action 'dispatch' */}
+          {/* O formulário chama o Server Action dispatch */}
           <form action={dispatch} className="space-y-4">
             
             {/* Campo E-mail */}
@@ -104,7 +104,7 @@ export default function LoginPage() {
               Entrar
             </Button>
 
-            {/* Link para a página de Cadastro */}
+            {/* Link para a pagina de Cadastro */}
             <div className="text-center text-sm">
               Não tem uma conta?{' '}
               <Link href="/register" className="font-medium text-blue-600 hover:underline">

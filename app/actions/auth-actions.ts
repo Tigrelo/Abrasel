@@ -11,7 +11,8 @@ import { signOut } from "@/auth";
 const registerSchema = z.object({
   name: z.string().min(3, "O nome precisa ter pelo menos 3 caracteres."),
   email: z.string().email("E-mail inválido."),
-  // ... (resto do schema de registro)
+
+  //(registro)
   password: z
     .string()
     .min(8, "A senha deve ter no mínimo 8 caracteres.")
@@ -114,6 +115,7 @@ export async function loginUser(
   prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
+
   // Converte o FormData para um objeto
   const data = Object.fromEntries(formData);
 
@@ -138,6 +140,7 @@ export async function loginUser(
 
     return { success: true };
   } catch (error) {
+    
     // 5. Captura erros específicos do Next-Auth
     if (error instanceof AuthError) {
       switch (error.type) {

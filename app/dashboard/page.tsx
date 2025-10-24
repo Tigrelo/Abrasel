@@ -18,8 +18,6 @@ export default async function DashboardPage() {
         <p className="mb-6 text-lg">
           Seja bem-vindo(a), {firstName}!
         </p>
-        {/* --- FIM DA MUDANÇA --- */}
-
         <div className="flex w-full flex-col space-y-2">
           
           {/* 1. Mostra o Painel Admin se for ADMIN */}

@@ -98,7 +98,7 @@ Siga os passos abaixo para executar a aplicação localmente.
 
 ```bash
 # 1. Clone o repositório
-git clone [https://github.com/Tigrelo/Abrasel](https://github.com/Tigrelo/Abrasel)
+git clone https://github.com/Tigrelo/Abrasel
 
 # 2. Entre na pasta do projeto
 cd Abrasel
@@ -113,11 +113,8 @@ npm install
 
     ```.env
     # Caminho do banco de dados SQLite (dentro da pasta prisma)
-    DATABASE_URL="file:./prisma/dev.db"
-
-    # Segredo usado pelo Next-Auth (gere um novo)
-    # Você pode usar 'openssl rand -base64 32' no terminal para gerar um
-    AUTH_SECRET="SEU_SEGREDO_FORTE_AQUI"
+   DATABASE_URL="file:./dev.db"
+   AUTH_SECRET="12345"
     ```
 
 2.  **Configure o Banco de Dados**

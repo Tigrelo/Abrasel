@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
+
 // Esta é uma Server Component (async)
 export default async function ProfilePage() {
   // 1. Pega a sessão do usuário (protegido por middleware)
