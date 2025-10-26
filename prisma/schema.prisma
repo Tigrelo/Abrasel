@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Define uma enum para os papéis de usuário
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   // Armazenaremos o hash da senha
+  cep       String?  // Opcional
+  state     String?  // Opcional
+  city      String?  // Opcional
+  role      Role     @default(USER) // Padrão é usuário comum
+  createdAt DateTime @default(now())
+}
